@@ -30,7 +30,7 @@ const App = {
         this.createBall();
         this.createBar();
         this.createBackground();
-        // this.createBrick();
+        this.createBrick();
         this.setEventListener();
         
     },
@@ -46,6 +46,14 @@ const App = {
         this.background = new Background(this.ctx, this.canvasSize, 0,0, 100, 100, 'redsun.jpeg');
     },
 
+    createBrick() {
+        for (let i = 0; i < 5; i++) {
+            this.bricks[i] = [];
+            for (let j = 0; j < 6; j++) {
+                this.bricks[i].push(new Bricks (this.ctx, 150 * j + 90, 70 * i + 40, 80, 30))
+            }
+        }
+    },
 
     setDimensions() {
         this.canvasTag.width = this.canvasSize.w;
@@ -74,6 +82,7 @@ const App = {
             this.clearScreen();
             this.drawAll();
             this.ballBarCollision();
+            this.ballBrickCollision()
            
             // this.clearAll();
         }, 1000 / this.fps);
@@ -83,7 +92,16 @@ const App = {
         this.background.draw();
         this.ball.draw();
         this.bar.draw();
-        // this.bricks.draw();
+        this.drawBricks(); // recorrer el array bricks 
+
+
+    },
+    drawBricks() {
+        for (let i = 0; i < this.bricks.length; i++) {
+            for (let j = 0; j < this.bricks[i].length; j++) {
+                this.bricks[i][j].draw();
+            }
+        }
     },
 
     clearScreen() {
@@ -95,8 +113,19 @@ const App = {
 
     ballBarCollision() {
         if (this.ball.ballPos.x < this.bar.barPos.x + this.bar.barSize.w && this.ball.ballPos.x + this.ball.ballSize.w > this.bar.barPos.x && this.ball.ballPos.y < this.bar.barPos.y + this.bar.barSize.h && this.ball.ballSize.h + this.ball.ballPos.y > this.bar.barPos.y) {
-            console.log('ha colisionado');
-            this.ball.changeDirection();
+            this.ball.changeDirectionY();
+        }
+    },
+
+    ballBrickCollision() {
+        for (let i = 0; i < this.bricks.length; i++) {
+            for (let j = 0; j < this.bricks[i].length; j++) {
+                this.bricks[i][j].draw();
+                if (this.ball.ballPos.x > this.bricks.bricksPos.x && this.ball.ballPos.x < this.bricks.bricksPos.x + this.bricks.bricksSize.w + this.ball.ballPos.y > this.bricks.bricksPos.y && this.ball.ballPos.y < this.bricks.bricksPos.y + this.bricks.bricksSize.h) {
+                    console.log('ha colisionado');
+                    this.ball.changeDirectionY();
+                }
+            }
         }
     }
 }

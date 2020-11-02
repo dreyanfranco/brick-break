@@ -46,8 +46,10 @@ class Ball {
         this.ballPos.y -= this.ballVel.y;
     }
 
-    changeDirection() {
+    changeDirectionY() {
         this.ballVel.y *= -1;
+    }
+    changeDirectionX() {
         this.ballVel.x *= -1;
     }
 }

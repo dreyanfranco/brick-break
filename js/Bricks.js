@@ -1,10 +1,6 @@
 class Bricks {
-    constructor(ctx, canvasSize, bricksPosX, bricksPosY, bricksWidth, bricksHeight) {
+    constructor(ctx, bricksPosX, bricksPosY, bricksWidth, bricksHeight) {
         this.ctx = ctx;
-        this.canvasSize = {
-            w: canvasSize.w,
-            h: canvasSize.h
-        };
         this.bricksPos = {
             x: bricksPosX,
             y: bricksPosY
@@ -13,11 +9,11 @@ class Bricks {
             w: bricksWidth,
             h: bricksHeight
         };
-        this.init();
-    }
-    init() {
     }
     draw() {
+        this.ctx.fillStyle = 'black'
+        this.ctx.fillRect(this.bricksPos.x, this.bricksPos.y, this.bricksSize.w, this.bricksSize.h)
     }
+    
 
 }
