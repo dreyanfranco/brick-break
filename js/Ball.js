@@ -34,7 +34,7 @@ class Ball {
     moveBall() {
         if (this.ballPos.y < 0) {
             this.ballVel.y *= -1;
-        } else if (this.ballPos.y >= this.canvasSize.h - this.ballSize.h) {
+        } else if (this.ballPos.y >= this.canvasSize.h) {
             // alert('game over');
             // document.location.reload();
             // clearInterval(interval)

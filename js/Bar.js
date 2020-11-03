@@ -33,4 +33,8 @@ class Bar {
             this.barPos.x += 20;
         }
     }
+
+    barPowerUp() {
+        // se va hacer mas grande
+    }
 }
