@@ -10,7 +10,7 @@ const App = {
     frames: 0,
     canvasSize: {
         w: 1000,
-        h: 900
+        h: 700
     },
     keys: {
         arrowLeft: 'ArrowLeft',
@@ -20,6 +20,7 @@ const App = {
     bar: undefined,
     bricks: [],
     powerUps: [],
+    lives: 0,
     
 
     init() {
@@ -28,30 +29,34 @@ const App = {
         this.ctx
         this.setDimensions();
         this.start();
-        this.createBall();
-        this.createBar();
-        this.createBackground();
-        this.createBrick();
+        this.createAll();
         this.setEventListener();
         
     },
 
+    createAll() {
+        this.createBall();
+        this.createBar();
+        this.createBackground();
+        this.createBrick();
+    },
+
     createBar() {
-        this.bar = new Bar(this.ctx, this.canvasSize, this.canvasSize.w /2 - 65, 845, 130, 40, 10, 'paddle-pink.png');
+        this.bar = new Bar(this.ctx, this.canvasSize, this.canvasSize.w /2 - 65, 645, 130, 40, 10, 'paddle-pink.png');
     },
 
     createBall() {
-        this.ball = new Ball(this.ctx, this.canvasSize, this.canvasSize.w / 2 - 18, 810, 36, 36, .4, 5, 5, 'german.png');
+        this.ball = new Ball(this.ctx, this.canvasSize, this.canvasSize.w / 2 - 18, 610, 36, 36, .4, 5, 5, 'german.png');
     },
     createBackground() {
-        this.background = new Background(this.ctx, this.canvasSize, 0,0, 1000, 900, 'ironhack-logo.png');
+        this.background = new Background(this.ctx, this.canvasSize, this.canvasSize.w / 2 - 350,0, 700, 700, 'ironhack-logo.png');
     },
 
     createBrick() {
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 4; i++) {
             this.bricks[i] = [];
             for (let j = 0; j < 6; j++) {
-                this.bricks[i].push(new Bricks (this.ctx, 150 * j + 90, 70 * i + 40, 80, 30))
+                this.bricks[i].push(new Bricks (this.ctx, 150 * j + 80, 70 * i + 40, 90, 30))
             }
         }
     },
@@ -74,14 +79,12 @@ const App = {
 
     start() {
         this.interval = setInterval(() => {
-            // como hacer para que algo ocurra cada x tiempo
             // que quiero mas multiplo de 20, que quiero menos multiplo de 150 
-            if (this.frames % 900 === 0) {
+            if (this.frames % 20 === 0) {
                 this.generatepowerUp()
             }
             this.frames++; 
             this.clearScreen();
-            
             this.drawAll();
             this.ballBarCollision();
             this.ballBrickCollision();
@@ -124,7 +127,7 @@ const App = {
         const randomPosX = Math.random() * this.canvasSize.w;
         switch (powerUpType) {
             case 0:
-                this.powerUps.push(new Lives(this.ctx, randomPosX, -20, 20, 20, 2, 'lives.png', powerUpType));
+                this.powerUps.push(new Lives(this.ctx, randomPosX, -20, 20, 20, 2, 'heart.png', powerUpType));
                 break;
             case 1:
                 this.powerUps.push(new LongerBar(this.ctx, randomPosX, -125, 125, 125, 1, 'salsota.png', powerUpType));
@@ -139,12 +142,17 @@ const App = {
                 this.powerUps[i].powerUpPos.x + this.powerUps[i].powerUpSize.w > this.bar.barPos.x &&
                 this.powerUps[i].powerUpPos.y < this.bar.barPos.y + this.bar.barSize.h &&
                 this.powerUps[i].powerUpSize.h + this.powerUps[i].powerUpPos.y > this.bar.barPos.y) {
-                // switch (this.powerUps[i].typePowerUp) {
-                //     case 0:
-                //         lives++;
-                //     case 1:
-                //        this.bar setTimeout
-                // }
+                switch (this.powerUps[i].typePowerUp) {
+                    case 0:
+                        // it has to dissapear when it touches the bar
+                        this.powerUps[i].splice(0, 0);
+                        // lives++;
+                    case 1:
+                        // setTimeout
+                        // longer bar
+                        // this.barSize.w === 200;
+                        this.powerUps[i].splice(0, 0);
+                }
             }
         }
     },

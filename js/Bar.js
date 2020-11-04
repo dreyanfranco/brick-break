@@ -29,7 +29,7 @@ class Bar {
         if (dir === 'left' && this.barPos.x >= 15) {
             this.barPos.x -= 20;
         }
-        if (dir === 'right' && this.barPos.x < 828) {
+        if (dir === 'right' && this.barPos.x < 870) {
             this.barPos.x += 20;
         }
     }

@@ -27,7 +27,7 @@ class Ball {
         this.ballImageInstance.src = `img/${this.ballImageName}`;
     }
     draw() {
-        this.moveBall();
+        // this.moveBall();
         this.ctx.drawImage(this.ballImageInstance, this.ballPos.x, this.ballPos.y, this.ballSize.w, this.ballSize.h);
     }
     
