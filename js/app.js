@@ -14,7 +14,8 @@ const App = {
     },
     keys: {
         arrowLeft: 'ArrowLeft',
-        arrowRight: 'ArrowRight'
+        arrowRight: 'ArrowRight',
+        enter: 'Enter'
     },
     ball: undefined,
     bar: undefined,
@@ -22,8 +23,8 @@ const App = {
     powerUps: [],
     livesCounter: 3,
     scoreCounter: 0,
+    gameStatus: undefined,
     
-
     init() {
         this.canvasTag = document.getElementById('canvas');
         this.ctx = this.canvasTag.getContext('2d');
@@ -75,8 +76,10 @@ const App = {
             if (event.key === this.keys.arrowLeft) {
                 this.bar.move('left');
             }
+            if (event.key === this.keys.enter) {
+                this.gameStatus = 'Playing game';
+            }
         }
-
     },
 
     start() {
@@ -89,27 +92,30 @@ const App = {
         this.audioBrick = new Audio('audio/brick-sound2.wav');
         this.audioLiveLost = new Audio('audio/error-sound.wav');
 
-
-        // this.audioBackground.play();
-
+        this.gameStatus = 'Playing game';
         this.interval = setInterval(() => {
-            if (this.frames % 1000 === 0) {
-                this.generatepowerUp()
+            switch (this.gameStatus) {
+                case 'Playing game':
+                    if (this.frames % 1000 === 0) {
+                        this.generatepowerUp()
+                    }
+                    this.frames++;
+                    this.clearScreen();
+                    this.drawAll();
+                    this.ballBarCollision();
+                    this.ballBrickCollision();
+                    this.barPowerUpCollision();
+                    this.liveControl();
+                    this.youWin();
+                    // this.audioBackground.play();
+                    if (this.livesCounter === 2) {
+                        this.gameOver();
+                    }
+                    break;
+                case 'Game Over':
+                    this.drawgameOver();
+                    break;
             }
-            this.frames++; 
-            this.clearScreen();
-            this.drawAll();
-            this.ballBarCollision();
-            this.ballBrickCollision();
-            this.barPowerUpCollision();
-            this.liveControl();
-            this.youWin();
-            if (this.livesCounter === 0) {
-                this.gameOver();
-                
-            }
-            
-            // this.clearAll();
         }, 1000 / this.fps);
     },
 
@@ -184,12 +190,10 @@ const App = {
     liveControl() {
         if (this.ball.ballPos.y >= this.canvasSize.h  && this.ball.ballPos.y <= this.canvasSize.h + 1 ) {
             this.livesCounter--;
-            this.partialReset();
             if (this.livesCounter > 0) {
-                this.audioLiveLost.play()
-            } else {
-                this.audioGameover.play()
+                this.audioLiveLost.play();
             }
+            this.partialReset();
         } 
     },
 
@@ -268,13 +272,16 @@ const App = {
 
     gameOver() {
         this.totalReset();
-        clearInterval(this.interval);
-        this.drawgameOver();
+        // clearInterval(this.interval);
+        this.audioGameover.play();
+        this.gameStatus = 'Game Over';
     },
 
     drawgameOver() {
         this.ctx.fillStyle = 'black';
-        this.ctx.font = '50px sans-serif';
+        this.ctx.font = '50px Arial';
         this.ctx.fillText('💩 LEARN JAVASCRIPT, STOP PLAYING!💩', this.canvasSize.w / 2 - 495, this.canvasSize.h / 2);
+        this.ctx.font = '20px Arial';
+        this.ctx.fillText('Press enter to restart', this.canvasSize.w / 2 - 495, this.canvasSize.h / 2 + 100 )
     }
 }
