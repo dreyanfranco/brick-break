@@ -14,8 +14,7 @@ const App = {
     },
     keys: {
         arrowLeft: 'ArrowLeft',
-        arrowRight: 'ArrowRight',
-        enter: 'Enter'
+        arrowRight: 'ArrowRight'
     },
     ball: undefined,
     bar: undefined,
@@ -76,9 +75,6 @@ const App = {
             if (event.key === this.keys.arrowLeft) {
                 this.bar.move('left');
             }
-            if (event.key === this.keys.enter) {
-                
-            }
         }
 
     },
@@ -89,9 +85,14 @@ const App = {
         this.audioSalsota = new Audio('audio/salsota-sound.mp3');
         this.audioLive = new Audio('audio/vida-sound.mp3');
         this.audioWinning = new Audio('audio/winning-sound.mp3');
+        this.audioPaddle = new Audio('audio/paddle-sound.wav');
+        this.audioBrick = new Audio('audio/brick-sound2.wav');
+        this.audioLiveLost = new Audio('audio/error-sound.wav');
+
+
+        // this.audioBackground.play();
 
         this.interval = setInterval(() => {
-            // que quiero mas multiplo de 20, que quiero menos multiplo de 150 
             if (this.frames % 1000 === 0) {
                 this.generatepowerUp()
             }
@@ -103,7 +104,7 @@ const App = {
             this.barPowerUpCollision();
             this.liveControl();
             this.youWin();
-            if (this.livesCounter === 2) {
+            if (this.livesCounter === 0) {
                 this.gameOver();
                 
             }
@@ -147,7 +148,6 @@ const App = {
         this.ctx.fillText(`Score: ${this.scoreCounter}`, 50, 30)
     },
 
-
     clearScreen() {
         this.ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h);
     },
@@ -173,12 +173,23 @@ const App = {
         this.ball.ballVel.y = this.ball.ballSpeed;
     },
     totalReset() {
-        
+        this.createBrick();
+        this.ball.ballPos.x = this.canvasSize.w / 2 - this.ball.ballSize.w / 2;
+        this.ball.ballPos.y = 610;
+        this.ball.ballVel.x = 0;
+        this.ball.ballVel.y = this.ball.ballSpeed;
+        this.livesCounter = 3;
+        this.scoreCounter = 0;
     },
     liveControl() {
         if (this.ball.ballPos.y >= this.canvasSize.h  && this.ball.ballPos.y <= this.canvasSize.h + 1 ) {
             this.livesCounter--;
             this.partialReset();
+            if (this.livesCounter > 0) {
+                this.audioLiveLost.play()
+            } else {
+                this.audioGameover.play()
+            }
         } 
     },
 
@@ -193,7 +204,6 @@ const App = {
                         this.audioLive.play();
                         this.powerUps.splice(i, 1);
                         this.livesCounter++;
-                        
                         break;
                     case 1:
                         this.bar.changeLarge(200);
@@ -214,6 +224,7 @@ const App = {
             this.ball.ballPos.x + this.ball.ballSize.w > this.bar.barPos.x &&
             this.ball.ballPos.y < this.bar.barPos.y + this.bar.barSize.h &&
             this.ball.ballSize.h + this.ball.ballPos.y > this.bar.barPos.y) {
+            this.audioPaddle.play();
             this.ball.changeDirectionY();
             this.ball.changeAngleX(this.bar.barPos.x + this.bar.barSize.w / 2, this.bar.barSize.w / 2);
         }
@@ -229,7 +240,7 @@ const App = {
                     this.ball.ballPos.y < this.bricks[i][j].bricksPos.y + this.bricks[i][j].bricksSize.h && 
                     this.ball.ballPos.y + this.ball.ballSize.h > this.bricks[i][j].bricksPos.y) {
                     const distanceBtwCenters = (this.bricks[i][j].bricksPos.x + this.bricks[i][j].bricksSize.w / 2) - (this.ball.ballPos.x + this.ball.ballSize.w / 2);
-                    
+                    this.audioBrick.play();
                     this.scoreCounter += 10;
 
                     if (distanceBtwCenters < this.bricks[i][j].bricksSize.w / 2 && distanceBtwCenters > -this.bricks[i][j].bricksSize.w / 2 ) {
@@ -256,18 +267,14 @@ const App = {
     },
 
     gameOver() {
+        this.totalReset();
         clearInterval(this.interval);
-        // this.audioGameover.play();
         this.drawgameOver();
     },
 
     drawgameOver() {
-        // this.ctx.fillText("Attack!", this.canvasSize.w / 2 - 495 + (rectWidth / 2), rectY + (rectHeight / 2));
         this.ctx.fillStyle = 'black';
         this.ctx.font = '50px sans-serif';
         this.ctx.fillText('💩 LEARN JAVASCRIPT, STOP PLAYING!💩', this.canvasSize.w / 2 - 495, this.canvasSize.h / 2);
-        // this.ctx.fillStyle = 'white';
-        // this.ctx.fillRect(this.canvasSize.w / 2 - 495, 340, this.canvasSize.w, 50);
-
     }
 }

@@ -3,15 +3,14 @@ body {
     padding: 0;
     text-align: center;
     display: flex;
-    /* justify-content: space-between; */
+    justify-content: space-between;
 }
 
 .game-intro {
-    /* background-color: #fff;  */
-   
-    padding: 0% 2%;
-   
-
+    background-color: #fff;
+    position: fixed;
+    width: 100%;
+    height: 100%;
 }
 
 .game-intro p {
@@ -36,10 +35,15 @@ body button {
     box-shadow: 0;
     border-radius: 5px;
     margin-bottom: 20px;
+} 
+
+.hide {
+    display: none;
 }
 
+
 #canvas {
-    float: left;
     border: 4px solid black;
     margin: 0 auto 0 auto;
+    display: block;
 }
