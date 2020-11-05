@@ -107,8 +107,8 @@ const App = {
                     this.barPowerUpCollision();
                     this.liveControl();
                     this.youWin();
-                    // this.audioBackground.play();
-                    if (this.livesCounter === 2) {
+                    this.audioBackground.play();
+                    if (this.livesCounter === 0) {
                         this.gameOver();
                     }
                     break;
@@ -267,21 +267,21 @@ const App = {
     drawWin() {
         this.ctx.fillStyle = 'black';
         this.ctx.font = '80px sans-serif';
-        this.ctx.fillText('🔥FUEGOTE🔥', this.canvasSize.w / 2 - 275 , this.canvasSize.h / 2)
+        this.ctx.fillText('🔥FUEGOTE🔥', this.canvasSize.w / 2 - 275, this.canvasSize.h / 2 + 40);
     },
 
     gameOver() {
         this.totalReset();
-        // clearInterval(this.interval);
         this.audioGameover.play();
         this.gameStatus = 'Game Over';
     },
 
     drawgameOver() {
+
         this.ctx.fillStyle = 'black';
-        this.ctx.font = '50px Arial';
-        this.ctx.fillText('💩 LEARN JAVASCRIPT, STOP PLAYING!💩', this.canvasSize.w / 2 - 495, this.canvasSize.h / 2);
-        this.ctx.font = '20px Arial';
-        this.ctx.fillText('Press enter to restart', this.canvasSize.w / 2 - 495, this.canvasSize.h / 2 + 100 )
+        this.ctx.font = '40px Arial';
+        this.ctx.fillText('💩 LEARN JAVASCRIPT, STOP PLAYING!💩', this.canvasSize.w / 2 - 400, this.canvasSize.h / 2 + 20);
+        this.ctx.font = '30px Arial';
+        this.ctx.fillText('Press enter to restart', this.canvasSize.w / 2 - 140, this.canvasSize.h / 2 + 150 )
     }
 }
