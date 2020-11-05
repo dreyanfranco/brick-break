@@ -14,7 +14,8 @@ const App = {
     },
     keys: {
         arrowLeft: 'ArrowLeft',
-        arrowRight: 'ArrowRight'
+        arrowRight: 'ArrowRight',
+        enter: 'Enter'
     },
     ball: undefined,
     bar: undefined,
@@ -29,30 +30,29 @@ const App = {
         this.ctx = this.canvasTag.getContext('2d');
         this.ctx
         this.setDimensions();
-        this.start();
         this.createAll();
         this.setEventListener();
-       
-        
+        this.start();
     },
 
     createAll() {
-        // this.createBall();
-        // this.createBar();
-        // this.createBackground();
+        this.createBall();
+        this.createBar();
+        this.createBackground();
         this.createBrick();
     },
 
-    // createBar() {
-        
-    // },
+    createBar() {
+        this.bar = new Bar(this.ctx, this.canvasSize, this.canvasSize.w / 2 - 65, 645, 130, 40, 20, 'paddle-pink.png')
+    },
 
-    // createBall() {
+    createBall() {
+        this.ball = new Ball(this.ctx, this.canvasSize, this.canvasSize.w / 2 - 18, 610, 36, 36, .4, 3, 'german.png')
+    },
 
-    // },
-    // createBackground() {
-
-    // },
+    createBackground() {
+        this.background = new Background(this.ctx, this.canvasSize, this.canvasSize.w / 2 - 350, 0, 700, 700, 'ironhack-logo.png');
+    },
 
     createBrick() {
         for (let i = 0; i < 4; i++) {
@@ -76,6 +76,9 @@ const App = {
             if (event.key === this.keys.arrowLeft) {
                 this.bar.move('left');
             }
+            if (event.key === this.keys.enter) {
+                
+            }
         }
 
     },
@@ -86,8 +89,7 @@ const App = {
         this.audioSalsota = new Audio('audio/salsota-sound.mp3');
         this.audioLive = new Audio('audio/vida-sound.mp3');
         this.audioWinning = new Audio('audio/winning-sound.mp3');
-        // this.audioBackground.play();
-        this.partialReset();
+
         this.interval = setInterval(() => {
             // que quiero mas multiplo de 20, que quiero menos multiplo de 150 
             if (this.frames % 1000 === 0) {
@@ -100,9 +102,10 @@ const App = {
             this.ballBrickCollision();
             this.barPowerUpCollision();
             this.liveControl();
-            
+            this.youWin();
             if (this.livesCounter === 2) {
                 this.gameOver();
+                
             }
             
             // this.clearAll();
@@ -163,21 +166,20 @@ const App = {
         }
     },
     partialReset() {
-        this.bar = new Bar(this.ctx, this.canvasSize, this.canvasSize.w / 2 - 65, 645, 130, 40, 20, 'paddle-pink.png');
-        this.ball = new Ball(this.ctx, this.canvasSize, this.canvasSize.w / 2 - 18, 610, 36, 36, .4, 3, 'german.png');
-        this.background = new Background(this.ctx, this.canvasSize, this.canvasSize.w / 2 - 350, 0, 700, 700, 'ironhack-logo.png');
+        this.bar.barPos.x = this.canvasSize.w / 2 - this.bar.barSize.w / 2;
+        this.ball.ballPos.x = this.canvasSize.w / 2 - this.ball.ballSize.w / 2;
+        this.ball.ballPos.y = 610;
+        this.ball.ballVel.x = 0;
+        this.ball.ballVel.y = this.ball.ballSpeed;
+    },
+    totalReset() {
         
     },
-    // totalReset() {
-    //     this.createAll();
-    // },
     liveControl() {
         if (this.ball.ballPos.y >= this.canvasSize.h  && this.ball.ballPos.y <= this.canvasSize.h + 1 ) {
-            // document.location.reload();
             this.livesCounter--;
-            // this.partialReset();
+            this.partialReset();
         } 
-
     },
 
     barPowerUpCollision() {
@@ -241,7 +243,31 @@ const App = {
         }
     },
 
+    youWin() {
+        if (this.scoreCounter === 240) {
+            this.audioWinning.play();
+            this.drawWin();
+        }
+    },
+    drawWin() {
+        this.ctx.fillStyle = 'black';
+        this.ctx.font = '80px sans-serif';
+        this.ctx.fillText('🔥FUEGOTE🔥', this.canvasSize.w / 2 - 275 , this.canvasSize.h / 2)
+    },
+
     gameOver() {
-        clearInterval(this.interval)
+        clearInterval(this.interval);
+        // this.audioGameover.play();
+        this.drawgameOver();
+    },
+
+    drawgameOver() {
+        // this.ctx.fillText("Attack!", this.canvasSize.w / 2 - 495 + (rectWidth / 2), rectY + (rectHeight / 2));
+        this.ctx.fillStyle = 'black';
+        this.ctx.font = '50px sans-serif';
+        this.ctx.fillText('💩 LEARN JAVASCRIPT, STOP PLAYING!💩', this.canvasSize.w / 2 - 495, this.canvasSize.h / 2);
+        // this.ctx.fillStyle = 'white';
+        // this.ctx.fillRect(this.canvasSize.w / 2 - 495, 340, this.canvasSize.w, 50);
+
     }
 }

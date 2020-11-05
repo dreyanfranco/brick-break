@@ -25,6 +25,7 @@ class PowerUps {
         this.ctx.drawImage(this.powerUpImageInstance, this.powerUpPos.x, this.powerUpPos.y, this.powerUpSize.w, this.powerUpSize.h);
     }
     dropPowerUp() {
+    
         this.powerUpPos.y += this.powerUpSpeed;
     }
     // changeSize() {
