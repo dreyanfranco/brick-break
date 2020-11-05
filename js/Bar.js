@@ -26,15 +26,28 @@ class Bar {
         this.ctx.drawImage(this.barImageInstance, this.barPos.x, this.barPos.y, this.barSize.w, this.barSize.h);
     }
     move(dir) {
-        if (dir === 'left' && this.barPos.x >= 15) {
-            this.barPos.x -= 20;
-        }
-        if (dir === 'right' && this.barPos.x < 870) {
-            this.barPos.x += 20;
+        switch (dir) {
+            case "left":
+                if (this.barPos.x - this.barSpeed < 0) {
+                    this.barPos.x = 0;
+                } else {
+                    this.barPos.x -= this.barSpeed;
+                }
+                break;
+            case "right":
+                if (this.barPos.x + this.barSpeed + this.barSize.w > this.canvasSize.w) {
+                    this.barPos.x = this.canvasSize.w - this.barSize.w;
+                } else {
+                    this.barPos.x += this.barSpeed;
+                }
+                break;
         }
     }
 
-    barPowerUp() {
-        // se va hacer mas grande
+    changeLarge(newLarge) {
+        this.barSize.w = newLarge;
+        if (this.barPos.x + newLarge > this.canvasSize.w) {
+            this.barPos.x = this.canvasSize.w - this.barSize.w
+        }
     }
 }

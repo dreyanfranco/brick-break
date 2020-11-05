@@ -20,7 +20,8 @@ const App = {
     bar: undefined,
     bricks: [],
     powerUps: [],
-    lives: 0,
+    livesCounter: 3,
+    scoreCounter: 0,
     
 
     init() {
@@ -31,32 +32,33 @@ const App = {
         this.start();
         this.createAll();
         this.setEventListener();
+       
         
     },
 
     createAll() {
-        this.createBall();
-        this.createBar();
-        this.createBackground();
+        // this.createBall();
+        // this.createBar();
+        // this.createBackground();
         this.createBrick();
     },
 
-    createBar() {
-        this.bar = new Bar(this.ctx, this.canvasSize, this.canvasSize.w /2 - 65, 645, 130, 40, 10, 'paddle-pink.png');
-    },
+    // createBar() {
+        
+    // },
 
-    createBall() {
-        this.ball = new Ball(this.ctx, this.canvasSize, this.canvasSize.w / 2 - 18, 610, 36, 36, .4, 5, 5, 'german.png');
-    },
-    createBackground() {
-        this.background = new Background(this.ctx, this.canvasSize, this.canvasSize.w / 2 - 350,0, 700, 700, 'ironhack-logo.png');
-    },
+    // createBall() {
+
+    // },
+    // createBackground() {
+
+    // },
 
     createBrick() {
         for (let i = 0; i < 4; i++) {
             this.bricks[i] = [];
             for (let j = 0; j < 6; j++) {
-                this.bricks[i].push(new Bricks (this.ctx, 150 * j + 80, 70 * i + 40, 90, 30))
+                this.bricks[i].push(new Bricks(this.ctx, 150 * j + 80, 70 * i + 40, 90, 30))
             }
         }
     },
@@ -75,12 +77,20 @@ const App = {
                 this.bar.move('left');
             }
         }
+
     },
 
     start() {
+        this.audioBackground = new Audio('audio/background-sound.mp3');
+        this.audioGameover = new Audio('audio/gameover.mp3');
+        this.audioSalsota = new Audio('audio/salsota-sound.mp3');
+        this.audioLive = new Audio('audio/vida-sound.mp3');
+        this.audioWinning = new Audio('audio/winning-sound.mp3');
+        // this.audioBackground.play();
+        this.partialReset();
         this.interval = setInterval(() => {
             // que quiero mas multiplo de 20, que quiero menos multiplo de 150 
-            if (this.frames % 20 === 0) {
+            if (this.frames % 1000 === 0) {
                 this.generatepowerUp()
             }
             this.frames++; 
@@ -89,7 +99,12 @@ const App = {
             this.ballBarCollision();
             this.ballBrickCollision();
             this.barPowerUpCollision();
-           
+            this.liveControl();
+            
+            if (this.livesCounter === 2) {
+                this.gameOver();
+            }
+            
             // this.clearAll();
         }, 1000 / this.fps);
     },
@@ -102,12 +117,14 @@ const App = {
         if (this.powerUps.length > 0) {
             this.drawPowerUps();
         }
+        this.drawText();
     },
 
     drawBricks() {
         for (let i = 0; i < this.bricks.length; i++) {
             for (let j = 0; j < this.bricks[i].length; j++) {
                 this.bricks[i][j].draw();
+
             }
         }
     },
@@ -117,6 +134,16 @@ const App = {
             element.draw();
         });
     },
+
+    drawText() {
+        this.ctx.fillStyle = 'black';
+        this.ctx.font = '20px sans-serif';
+        this.ctx.fillText(`Lives: ${this.livesCounter}`, 850, 30)
+        this.ctx.fillStyle = 'black';
+        this.ctx.font = '20px sans-serif';
+        this.ctx.fillText(`Score: ${this.scoreCounter}`, 50, 30)
+    },
+
 
     clearScreen() {
         this.ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h);
@@ -130,10 +157,27 @@ const App = {
                 this.powerUps.push(new Lives(this.ctx, randomPosX, -20, 20, 20, 2, 'heart.png', powerUpType));
                 break;
             case 1:
-                this.powerUps.push(new LongerBar(this.ctx, randomPosX, -125, 125, 125, 1, 'salsota.png', powerUpType));
+                this.powerUps.push(new LongerBar(this.ctx, randomPosX, -125, 125, 30, 1, 'salsota.png', powerUpType));
                 break;
             default:
         }
+    },
+    partialReset() {
+        this.bar = new Bar(this.ctx, this.canvasSize, this.canvasSize.w / 2 - 65, 645, 130, 40, 20, 'paddle-pink.png');
+        this.ball = new Ball(this.ctx, this.canvasSize, this.canvasSize.w / 2 - 18, 610, 36, 36, .4, 3, 'german.png');
+        this.background = new Background(this.ctx, this.canvasSize, this.canvasSize.w / 2 - 350, 0, 700, 700, 'ironhack-logo.png');
+        
+    },
+    // totalReset() {
+    //     this.createAll();
+    // },
+    liveControl() {
+        if (this.ball.ballPos.y >= this.canvasSize.h  && this.ball.ballPos.y <= this.canvasSize.h + 1 ) {
+            // document.location.reload();
+            this.livesCounter--;
+            // this.partialReset();
+        } 
+
     },
 
     barPowerUpCollision() {
@@ -144,14 +188,20 @@ const App = {
                 this.powerUps[i].powerUpSize.h + this.powerUps[i].powerUpPos.y > this.bar.barPos.y) {
                 switch (this.powerUps[i].typePowerUp) {
                     case 0:
-                        // it has to dissapear when it touches the bar
-                        this.powerUps[i].splice(0, 0);
-                        // lives++;
+                        this.audioLive.play();
+                        this.powerUps.splice(i, 1);
+                        this.livesCounter++;
+                        
+                        break;
                     case 1:
-                        // setTimeout
-                        // longer bar
-                        // this.barSize.w === 200;
-                        this.powerUps[i].splice(0, 0);
+                        this.bar.changeLarge(200);
+                        this.audioSalsota.play();
+                        this.powerUps.splice(i, 1);
+                        const longerBar = setTimeout(() => {
+                            this.bar.changeLarge(130)
+                        }, 10000);
+                        break;
+
                 }
             }
         }
@@ -162,7 +212,8 @@ const App = {
             this.ball.ballPos.x + this.ball.ballSize.w > this.bar.barPos.x &&
             this.ball.ballPos.y < this.bar.barPos.y + this.bar.barSize.h &&
             this.ball.ballSize.h + this.ball.ballPos.y > this.bar.barPos.y) {
-            this.ball.changeDirectionY(); // direccion Y va bien falta solucionar la direccion X
+            this.ball.changeDirectionY();
+            this.ball.changeAngleX(this.bar.barPos.x + this.bar.barSize.w / 2, this.bar.barSize.w / 2);
         }
     },
 
@@ -175,11 +226,22 @@ const App = {
                     this.ball.ballPos.x + this.ball.ballSize.w > this.bricks[i][j].bricksPos.x &&
                     this.ball.ballPos.y < this.bricks[i][j].bricksPos.y + this.bricks[i][j].bricksSize.h && 
                     this.ball.ballPos.y + this.ball.ballSize.h > this.bricks[i][j].bricksPos.y) {
+                    const distanceBtwCenters = (this.bricks[i][j].bricksPos.x + this.bricks[i][j].bricksSize.w / 2) - (this.ball.ballPos.x + this.ball.ballSize.w / 2);
+                    
+                    this.scoreCounter += 10;
+
+                    if (distanceBtwCenters < this.bricks[i][j].bricksSize.w / 2 && distanceBtwCenters > -this.bricks[i][j].bricksSize.w / 2 ) {
+                        this.ball.changeDirectionY();
+                    } else {
+                        this.ball.changeDirectionX()
+                    }
                     this.bricks[i].splice(j, 1);
-                    this.ball.changeDirectionY();
-                    this.ball.changeDirectionX();
                 }
             }
         }
+    },
+
+    gameOver() {
+        clearInterval(this.interval)
     }
 }

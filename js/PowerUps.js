@@ -27,12 +27,16 @@ class PowerUps {
     dropPowerUp() {
         this.powerUpPos.y += this.powerUpSpeed;
     }
+    // changeSize() {
+
+    // }
 }
 
 class Lives extends PowerUps {
     constructor(ctx, powerUpPosX, powerUpPosY, powerUpWidth, powerUpHeight, powerUpSpeed, livesImage, typePowerUp) {
         super(ctx, powerUpPosX, powerUpPosY, powerUpWidth, powerUpHeight, powerUpSpeed, livesImage, typePowerUp);
     }
+
 }
 
 class LongerBar extends PowerUps {
@@ -41,4 +45,5 @@ class LongerBar extends PowerUps {
         this.longerBarImageName = longerBarImage;
         this.longerBarImageInstance = undefined;
     }
+
 }

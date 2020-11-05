@@ -11,7 +11,7 @@ class Bricks {
         };
     }
     draw() {
-        this.ctx.fillStyle = 'black'
+        this.ctx.fillStyle = '#cc2b5e';
         this.ctx.fillRect(this.bricksPos.x, this.bricksPos.y, this.bricksSize.w, this.bricksSize.h)
     }
     
